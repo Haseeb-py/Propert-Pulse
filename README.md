@@ -1,4 +1,8 @@
 # PropertyPulse – Dubai Real Estate Interactive Visualization System
+## Github Url
+https://github.com/Haseeb-py/Propert-Pulse
+## Deployment Url
+https://property-pulsedubai.vercel.app/
 
 ## Overview
 
