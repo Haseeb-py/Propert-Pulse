@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PropertyPulse · Dubai Real Estate Intelligence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="tooltip"></div>
+
+<!-- ═══════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════ -->
+<header>
+  <div class="header-brand">
+    <h1>Property<span>Pulse</span></h1>
+    <p>Dubai Real Estate Intelligence · 2020 – 2026</p>
+  </div>
+
+  <div class="header-kpis">
+    <div class="kpi-pill">
+      <span class="val" style="color:var(--blue)">50K+</span>
+      <span class="lbl">Secondary Sales</span>
+    </div>
+    <div class="kpi-pill">
+      <span class="val" style="color:var(--teal)">12K</span>
+      <span class="lbl">Off-Plan Units</span>
+    </div>
+    <div class="kpi-pill">
+      <span class="val" style="color:var(--amber)">25K</span>
+      <span class="lbl">Rental Listings</span>
+    </div>
+    <div class="kpi-pill">
+      <span class="val" style="color:var(--rose)">84</span>
+      <span class="lbl">Communities</span>
+    </div>
+    <div class="kpi-pill">
+      <span class="val" style="color:var(--purple)">+74%</span>
+      <span class="lbl">Price Growth</span>
+    </div>
+  </div>
+
+  <div class="global-filter">
+    <label>YEAR RANGE</label>
+    <select id="global-year-from">
+      <option value="2020">2020</option>
+      <option value="2021">2021</option>
+      <option value="2022">2022</option>
+      <option value="2023">2023</option>
+    </select>
+    <span style="color:var(--text-3);font-size:12px">→</span>
+    <select id="global-year-to">
+      <option value="2023">2023</option>
+      <option value="2024">2024</option>
+      <option value="2025">2025</option>
+      <option value="2026" selected>2026</option>
+    </select>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════
+     NAV
+═══════════════════════════════════════════════ -->
+<nav>
+  <button class="active" onclick="showView('overview')">
+    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+    Market Overview
+  </button>
+  <button onclick="showView('prices')">
+    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12l4-4 3 3 5-7"/></svg>
+    Price Analysis
+  </button>
+  <button onclick="showView('geography')">
+    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a4 4 0 010 12M8 2a4 4 0 000 12M2 8h12"/></svg>
+    Geography & Metro
+  </button>
+  <button onclick="showView('offplan')">
+    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="12" height="9" rx="1"/><path d="M5 4V3a1 1 0 011-1h4a1 1 0 011 1v1"/></svg>
+    Off-Plan Pipeline
+  </button>
+  <button onclick="showView('rentals')">
+    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 13V5l6-3 6 3v8"/><path d="M6 13V9h4v4"/></svg>
+    Rental Market
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     VIEW 1: OVERVIEW
+═══════════════════════════════════════════════ -->
+<div id="view-overview" class="view active">
+
+  <!-- Insight KPIs -->
+  <div class="insight-row">
+    <div class="insight-card blue">
+      <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em">Secondary Market</div>
+      <span class="ic-val">$474</span>
+      <div class="ic-lbl">Median price/sqft (2026)</div>
+      <div class="ic-delta delta-up">▲ +74% since 2020</div>
+    </div>
+    <div class="insight-card teal">
+      <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em">Off-Plan Market</div>
+      <span class="ic-val">$591</span>
+      <div class="ic-lbl">Median price/sqft (2026)</div>
+      <div class="ic-delta delta-up">▲ +75% since 2020</div>
+    </div>
+    <div class="insight-card amber">
+      <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em">Annual Rent/sqft</div>
+      <span class="ic-val">$30</span>
+      <div class="ic-lbl">Median rental (2026)</div>
+      <div class="ic-delta delta-up">▲ +71% since 2020</div>
+    </div>
+    <div class="insight-card rose">
+      <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em">Off-Plan Premium</div>
+      <span class="ic-val">24.7%</span>
+      <div class="ic-lbl">Over secondary market</div>
+      <div class="ic-delta" style="color:var(--text-3)">Consistent 2022–2026</div>
+    </div>
+  </div>
+
+  <!-- Main trend chart -->
+  <div class="card" style="margin-bottom: 20px;">
+    <div class="card-header">
+      <div>
+        <div class="section-title">Price Trends — All Markets</div>
+        <div class="section-sub">Median price per sqft (USD) · Scroll to zoom · Drag to pan · Hover for crosshair values</div>
+      </div>
+      <span class="channel-badge">Position + Length</span>
+    </div>
+
+    <div class="controls">
+      <div class="btn-group" id="metric-toggle">
+        <button class="active" data-metric="all">All Markets</button>
+        <button data-metric="secondary">Secondary</button>
+        <button data-metric="offplan">Off-Plan</button>
+        <button data-metric="rental">Rental</button>
+      </div>
+      <label>Smoothing</label>
+      <input type="range" id="smooth-slider" min="1" max="6" value="1" step="1"/>
+      <span id="smooth-label" class="range-val">None</span>
+    </div>
+
+    <div id="trend-chart"></div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:var(--c-secondary)"></div>
+        Secondary Market
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:var(--c-offplan)"></div>
+        Off-Plan
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:var(--c-rental)"></div>
+        Rental (Annual/sqft, right axis)
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="section-title">Property Type Volume & Value</div>
+          <div class="section-sub">Count of secondary sales · hover to compare price</div>
+        </div>
+        <span class="channel-badge amber">Length + Color</span>
+      </div>
+      <div class="controls">
+        <label>Sort by</label>
+        <div class="btn-group" id="proptype-sort">
+          <button class="active" data-sort="count">Volume</button>
+          <button data-sort="median_price">Price</button>
+        </div>
+        <label style="margin-left:16px">Min listings</label>
+        <input type="range" id="proptype-min" min="0" max="9000" value="0" step="500"/>
+        <span id="proptype-min-val" class="range-val">0</span>
+      </div>
+      <div id="proptype-chart"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="section-title">View Premium Analysis</div>
+          <div class="section-sub">Median price/sqft by property view type</div>
+        </div>
+        <span class="channel-badge teal">Length + Hue</span>
+      </div>
+      <div class="controls">
+        <label>Highlight</label>
+        <div class="btn-group" id="view-highlight">
+          <button class="active" data-h="premium">Premium Views</button>
+          <button data-h="none">None</button>
+        </div>
+        <label style="margin-left:16px">Sort</label>
+        <div class="btn-group" id="view-sort">
+          <button class="active" data-sort="median_psf">Price</button>
+          <button data-sort="count">Listings</button>
+        </div>
+      </div>
+      <div id="view-chart"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     VIEW 2: PRICE ANALYSIS
+═══════════════════════════════════════════════ -->
+<div id="view-prices" class="view">
+
+  <div class="card" style="margin-bottom: 20px;">
+    <div class="card-header">
+      <div>
+        <div class="section-title">Price Distribution by Bedroom Count</div>
+        <div class="section-sub">Box plot — Q1, Median, Q3 of price/sqft (USD) · hover boxes for exact values</div>
+      </div>
+      <span class="channel-badge rose">Length + Position</span>
+    </div>
+    <div class="controls">
+      <label>Metric</label>
+      <div class="btn-group" id="bedroom-metric">
+        <button class="active" data-metric="psf">Price/sqft</button>
+        <button data-metric="total">Est. Total Price</button>
+      </div>
+      <label style="margin-left:16px">Min sample size</label>
+      <input type="range" id="bedroom-min" min="0" max="10000" value="0" step="500"/>
+      <span id="bedroom-min-val" class="range-val">0</span>
+    </div>
+    <div id="bedroom-chart"></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="section-title">Top Communities Ranking</div>
+          <div class="section-sub">Sortable by price or volume · click to explore</div>
+        </div>
+        <span class="channel-badge">Length + Color</span>
+      </div>
+      <div class="controls">
+        <label>Rank by</label>
+        <div class="btn-group" id="community-sort">
+          <button class="active" data-sort="price">Price/sqft</button>
+          <button data-sort="volume">Volume</button>
+        </div>
+        <label style="margin-left:auto">Show top</label>
+        <select id="community-top">
+          <option value="10">10</option>
+          <option value="15" selected>15</option>
+          <option value="20">20</option>
+        </select>
+      </div>
+      <div id="community-chart"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="section-title">Freehold vs Non-Freehold</div>
+          <div class="section-sub">Monthly price gap 2020–2026</div>
+        </div>
+        <span class="channel-badge teal">Position + Area</span>
+      </div>
+      <div class="controls">
+        <label>View</label>
+        <div class="btn-group" id="freehold-view">
+          <button class="active" data-view="both">Both Lines</button>
+          <button data-view="gap">Gap Only</button>
+        </div>
+      </div>
+      <div id="freehold-chart"></div>
+    </div>
+  </div>
+
+  <!-- Scatter plot: Metro distance vs rent (moved here as Price Analysis) -->
+  <div class="card" style="margin-top: 20px;">
+    <div class="card-header">
+      <div>
+        <div class="section-title">Metro Proximity vs Rental Price — Scatter Explorer</div>
+        <div class="section-sub">Annual rent (USD) vs walk distance (min) · drag to brush-select communities · color = price/sqft</div>
+      </div>
+      <span class="channel-badge purple">Position + Color + Size</span>
+    </div>
+    <div class="controls">
+      <label>Bubble size</label>
+      <div class="btn-group" id="scatter-size-toggle">
+        <button class="active" data-size="n_listings">Listings</button>
+        <button data-size="equal">Equal</button>
+      </div>
+      <label style="margin-left:16px">Min price/sqft</label>
+      <input type="range" id="scatter-price-min" min="0" max="2000" value="0" step="50"/>
+      <span id="scatter-price-min-val" class="range-val">$0</span>
+    </div>
+    <div id="scatter-info" class="scatter-info">Drag on the chart to select communities. Brushed points are highlighted across the dashboard.</div>
+    <div id="scatter-chart"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     VIEW 3: GEOGRAPHY & METRO
+═══════════════════════════════════════════════ -->
+<div id="view-geography" class="view">
+
+  <div class="card" style="margin-bottom: 20px;">
+    <div class="card-header">
+      <div>
+        <div class="section-title">Proportional Symbol Map — Community Prices</div>
+        <div class="section-sub">Scroll to zoom · drag to pan · hover bubbles · symbol size = listing volume</div>
+      </div>
+      <span class="channel-badge teal">Position + Size + Color</span>
+    </div>
+
+    <div class="controls">
+      <label>Color by</label>
+      <div class="btn-group" id="map-color-toggle">
+        <button class="active" data-col="price">Price/sqft</button>
+        <button data-col="volume">Volume</button>
+      </div>
+      <label style="margin-left:16px">Metro lines</label>
+      <input type="checkbox" id="show-metro" checked style="width:16px;height:16px;accent-color:var(--blue);cursor:pointer"/>
+      <label style="margin-left:0">Show</label>
+      <label style="margin-left:16px">Size scale</label>
+      <div class="btn-group" id="map-size-toggle">
+        <button class="active" data-size="volume">By Volume</button>
+        <button data-size="equal">Equal</button>
+      </div>
+    </div>
+
+    <div id="map-container">
+      <svg id="map-svg"></svg>
+      <div class="map-legend" id="map-legend">
+        <div id="map-legend-title" style="font-weight:600;color:var(--text-1)">Price/sqft</div>
+        <canvas id="map-legend-canvas"></canvas>
+        <div class="map-legend-labels">
+          <span id="map-legend-min">$127</span>
+          <span id="map-legend-max">$2,250</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="section-title">Metro Distance vs Annual Rent</div>
+        <div class="section-sub">Distance bins (walk minutes) vs median annual rent · bars encode rent by position (length)</div>
+      </div>
+      <span class="channel-badge amber">Length + Hue</span>
+    </div>
+    <div class="controls">
+      <label>Sort bins by</label>
+      <div class="btn-group" id="metro-sort">
+        <button class="active" data-sort="bin">Distance</button>
+        <button data-sort="annual_rent">Rent (desc)</button>
+      </div>
+    </div>
+    <div id="metro-chart"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     VIEW 4: OFF-PLAN
+═══════════════════════════════════════════════ -->
+<div id="view-offplan" class="view">
+
+  <div class="insight-row" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="insight-card teal">
+      <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em">Peak Pipeline Year</div>
+      <span class="ic-val">2026</span>
+      <div class="ic-lbl">3,773 units expected</div>
+      <div class="ic-delta delta-up">▲ Highest in dataset</div>
+    </div>
+    <div class="insight-card blue">
+      <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em">Tier 1 Premium</div>
+      <span class="ic-val">+33%</span>
+      <div class="ic-lbl">Over Tier 2 developers</div>
+      <div class="ic-delta" style="color:var(--text-3)">Consistent across plans</div>
+    </div>
+    <div class="insight-card amber">
+      <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em">Peak Off-Plan PSF</div>
+      <span class="ic-val">$666</span>
+      <div class="ic-lbl">2025 handover median</div>
+      <div class="ic-delta" style="color:var(--text-3)">$503 in 2024</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top: 0; margin-bottom: 20px;">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="section-title">Pipeline Volume by Handover Year</div>
+          <div class="section-sub">Total off-plan units expected per year</div>
+        </div>
+        <span class="channel-badge teal">Length + Color</span>
+      </div>
+      <div class="controls">
+        <label>Year range</label>
+        <select id="pipeline-from">
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+          <option value="2026">2026</option>
+        </select>
+        <span style="color:var(--text-3);font-size:12px">→</span>
+        <select id="pipeline-to">
+          <option value="2026">2026</option>
+          <option value="2027">2027</option>
+          <option value="2028" selected>2028</option>
+        </select>
+      </div>
+      <div id="pipeline-chart"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="section-title">Price by Developer Tier & Payment Plan</div>
+          <div class="section-sub">Grouped bars — Tier 1 vs Tier 2 across payment plan types</div>
+        </div>
+        <span class="channel-badge">Length + Hue</span>
+      </div>
+      <div class="controls">
+        <label>Show tier</label>
+        <div class="btn-group" id="developer-tier-toggle">
+          <button class="active" data-tier="both">Both</button>
+          <button data-tier="Tier 1">Tier 1</button>
+          <button data-tier="Tier 2">Tier 2</button>
+        </div>
+      </div>
+      <div id="developer-chart"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="section-title">Off-Plan vs Secondary: Price Convergence with Gap Area</div>
+        <div class="section-sub">Shaded area shows price gap · hover for exact values</div>
+      </div>
+      <span class="channel-badge teal">Position + Area</span>
+    </div>
+    <div class="controls">
+      <label>Smoothing</label>
+      <input type="range" id="offplan-smooth" min="1" max="6" value="1" step="1"/>
+      <span id="offplan-smooth-val" class="range-val">None</span>
+    </div>
+    <div id="offplan-secondary-chart"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     VIEW 5: RENTALS
+═══════════════════════════════════════════════ -->
+<div id="view-rentals" class="view">
+
+  <div class="grid-3" style="margin-top:0;">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="section-title">Furnishing Premium</div>
+          <div class="section-sub">Annual rent (USD) by status</div>
+        </div>
+        <span class="channel-badge amber">Length</span>
+      </div>
+      <div class="controls">
+        <label>Sort</label>
+        <div class="btn-group" id="furnish-sort">
+          <button class="active" data-sort="desc">High→Low</button>
+          <button data-sort="asc">Low→High</button>
+        </div>
+      </div>
+      <div id="furnish-chart"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="section-title">Contract Type Split</div>
+          <div class="section-sub">Distribution by contract duration</div>
+        </div>
+        <span class="channel-badge">Length + Hue</span>
+      </div>
+      <div class="controls">
+        <label>Display</label>
+        <div class="btn-group" id="contract-display">
+          <button class="active" data-disp="count">Count</button>
+          <button data-disp="pct">% Share</button>
+        </div>
+      </div>
+      <div id="contract-chart"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="section-title">Chiller Cost Impact</div>
+          <div class="section-sub">Rent with vs without district cooling</div>
+        </div>
+        <span class="channel-badge teal">Length</span>
+      </div>
+      <div class="controls">
+        <label>Unit</label>
+        <div class="btn-group" id="chiller-unit">
+          <button class="active" data-unit="annual">Annual</button>
+          <button data-unit="monthly">Monthly</button>
+        </div>
+      </div>
+      <div id="chiller-chart"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 20px;">
+    <div class="card-header">
+      <div>
+        <div class="section-title">Rental Yield by Community</div>
+        <div class="section-sub">Annual rent ÷ sale price × 100 — sortable · 5% benchmark line</div>
+      </div>
+      <span class="channel-badge rose">Length + Color</span>
+    </div>
+    <div class="controls">
+      <label>Filter ≥ yield</label>
+      <input type="range" id="yield-filter" min="0" max="12" value="0" step="0.5"/>
+      <span id="yield-filter-val" class="range-val">0%</span>
+    </div>
+    <div id="yield-chart"></div>
+  </div>
+</div>
+
+<footer>PropertyPulse · Interactive Dubai Real Estate Intelligence Dashboard · Built with D3.js v7 · Data Visualization Project 2026</footer>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
